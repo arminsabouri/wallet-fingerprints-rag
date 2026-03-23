@@ -1,0 +1,8 @@
+{
+  "project_name": "electrum",
+  "fingerprints": {
+    "tx_version": 2,
+    "bip69_sorting": 1,
+    "mixed_input_types": 1
+  }
+}
