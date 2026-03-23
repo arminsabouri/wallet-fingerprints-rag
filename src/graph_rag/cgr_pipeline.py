@@ -10,7 +10,9 @@ from codebase_rag.parser_loader import load_parsers
 from codebase_rag.services.graph_service import MemgraphIngestor
 
 
-def _resolve_excludes(repo_path: Path, cli_excludes: Iterable[str] | None) -> tuple[frozenset[str] | None, frozenset[str] | None]:
+def _resolve_excludes(
+    repo_path: Path, cli_excludes: Iterable[str] | None
+) -> tuple[frozenset[str] | None, frozenset[str] | None]:
     """
     Combine .cgrignore entries with CLI --exclude entries to produce exclude/unignore sets.
     Returns (exclude_paths, unignore_paths).

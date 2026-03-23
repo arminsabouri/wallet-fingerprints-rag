@@ -5,7 +5,7 @@ Graph-based Bitcoin wallet fingerprinting using code-graph-rag + Memgraph + Clau
 ## How it works
 
 1. **`graph`** — parses wallet source code, builds a Memgraph knowledge graph (functions, classes, call edges), and generates UniXcoder semantic embeddings stored locally via Qdrant.
-2. **`fingerprint`** — for each heuristic, does semantic search over the graph to find relevant functions, expands context via call graph traversal, then asks Claude to answer structured fingerprinting questions.
+2. **`agent-fingerprint`** — runs heuristic fingerprinting using claude-agent-sdk with the code-graph-rag MCP server.
 
 ## Requirements
 
@@ -43,6 +43,7 @@ uv run python -m graph_rag graph \
 This builds the Memgraph graph and generates semantic embeddings into `.qdrant_code_embeddings/` in the current directory.
 
 Flags:
+
 - `--repo-path`: path to the wallet source repository (required)
 - `--project-name`: label stored in graph metadata
 - `--clean`: wipe Memgraph before ingesting
@@ -52,20 +53,26 @@ Flags:
 ### Step 2: Run fingerprinting
 
 ```bash
-uv run python -m graph_rag fingerprint \
+uv run python -m graph_rag agent-fingerprint \
   --project-name sparrow-1.8.0 \
+  --repo-path /path/to/wallet \
   --output sparrow-fingerprints.json \
   --pretty
 ```
 
-Must be run from the same directory as `graph` so both commands share the `.qdrant_code_embeddings/` path. Use `--qdrant-path` to override.
+Requires the code-graph-rag binary on PATH (or `--cgr-bin`). Use `--qdrant-path` to override the default Qdrant DB location.
 
 Flags:
+
 - `--project-name`: must match the name used during graph build (required)
+- `--repo-path`: path to the wallet repository (required)
 - `--output`: output JSON file (default: `fingerprints.json`)
 - `--pretty`: indent the output JSON
 - `--qdrant-path`: path to local Qdrant DB (overrides `QDRANT_DB_PATH` env var)
 - `--model`: Claude model to use (default: `claude-sonnet-4-6`)
+- `--cgr-bin`: path to code-graph-rag binary (auto-detected from PATH if omitted)
+- `--concurrency`: max heuristics in parallel (default: 3)
+- `--save-transcripts`: save full agent transcripts to `<output>.transcripts.json`
 
 ### Output format
 
@@ -82,4 +89,4 @@ Flags:
 }
 ```
 
-Values are `1`/`0`/`-1` for binary heuristics, or a short string for text heuristics. `-1` means insufficient evidence in the code. -2 means an error occured.
+Values are `1`/`0`/`-1` for binary heuristics, or a short string for text heuristics. `-1` means insufficient evidence in the code.

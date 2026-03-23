@@ -26,57 +26,6 @@ When answering, think step by step about what the code does, then provide ONLY t
 on the last line with no other text. For example, if asked for 1/0/-1, your entire response \
 should be just the number."""
 
-FEW_SHOT_EXAMPLES = [
-    {
-        "user": """Does the following code implement low-R signature grinding? Only return 1, 0, or -1 if unclear.
-
-bool CKey::Sign(const uint256 &hash, std::vector<unsigned char>& vchSig, bool grind, uint32_t test_case) const {
-    ...
-    unsigned char extra_entropy[32] = {0};
-    WriteLE32(extra_entropy, test_case);
-    secp256k1_ecdsa_sign(secp256k1_context_sign, &sig, hash.begin(), begin(), secp256k1_nonce_function_rfc6979, grind ? extra_entropy : nullptr);
-    ...
-    // Grind for low R
-    while (IsLowR(vchSig) == false && grind) {
-        test_case++;
-        ...
-    }
-}""",
-        "assistant": "1",
-    },
-    {
-        "user": """Does the following code implement BIP69 sorting? Only return 1, 0, or -1 if unclear.
-
-void CWallet::AvailableCoins(std::vector<COutput>& vCoins, ...) const {
-    ...
-    for (const auto& entry : mapWallet) {
-        ...
-        vCoins.push_back(COutput(pcoin, i, nDepth, ...));
-    }
-}
-
-// Shuffle outputs
-std::shuffle(vCoins.begin(), vCoins.end(), FastRandomContext());""",
-        "assistant": "0",
-    },
-    {
-        "user": """Analyze the following code to identify which Bitcoin transaction input types are supported.
-Return a list of just comma separated strings containing only the supported input types.
-If no input types can be determined, return -1. Do not return any other text.
-
-def serialize_input(self, txin):
-    if txin.script_type == 'p2pkh':
-        return self._serialize_p2pkh(txin)
-    elif txin.script_type in ('p2wpkh', 'p2wsh'):
-        return self._serialize_witness(txin)
-    elif txin.script_type == 'p2sh':
-        return self._serialize_p2sh(txin)
-    elif txin.script_type == 'p2wpkh-p2sh':
-        return self._serialize_p2sh_p2wpkh(txin)""",
-        "assistant": "P2PKH, P2SH, P2WPKH, P2WSH, P2SH-P2WPKH",
-    },
-]
-
 HEURISTICS: list[dict] = [
     {
         "key": "tx_version",

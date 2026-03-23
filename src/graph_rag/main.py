@@ -13,7 +13,8 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     graph_parser = subparsers.add_parser(
-        "graph", help="Build a code graph using code-graph-rag (Memgraph + JSON export)."
+        "graph",
+        help="Build a code graph using code-graph-rag (Memgraph + JSON export).",
     )
     graph_parser.add_argument(
         "--repo-path",
@@ -105,36 +106,6 @@ def build_parser() -> argparse.ArgumentParser:
         help="Save full agent transcripts to <output>.transcripts.json.",
     )
 
-    fp_parser = subparsers.add_parser(
-        "fingerprint",
-        help="Run heuristic fingerprinting against a built graph.",
-    )
-    fp_parser.add_argument(
-        "--project-name",
-        required=True,
-        help="Project name used during graph build.",
-    )
-    fp_parser.add_argument(
-        "--output",
-        default="fingerprints.json",
-        help="Output JSON file path (default: fingerprints.json).",
-    )
-    fp_parser.add_argument(
-        "--pretty",
-        action="store_true",
-        help="Pretty-print the output JSON.",
-    )
-    fp_parser.add_argument(
-        "--qdrant-path",
-        default=None,
-        help="Path to local Qdrant DB (overrides QDRANT_DB_PATH env var).",
-    )
-    fp_parser.add_argument(
-        "--model",
-        default="claude-sonnet-4-6",
-        help="Claude model to use (default: claude-sonnet-4-6).",
-    )
-
     return parser
 
 
@@ -148,6 +119,7 @@ def main() -> None:
         if args.embedding_provider:
             os.environ["EMBEDDING_PROVIDER"] = args.embedding_provider
         from graph_rag.cgr_pipeline import run_graph_build
+
         repo_path = Path(args.repo_path)
         run_graph_build(
             repo_path=repo_path,
@@ -160,6 +132,7 @@ def main() -> None:
 
     elif args.command == "agent-fingerprint":
         from graph_rag.agent_pipeline import run_agent_fingerprint
+
         run_agent_fingerprint(
             project_name=args.project_name,
             repo_path=args.repo_path,
@@ -171,16 +144,8 @@ def main() -> None:
             concurrency=args.concurrency,
             save_transcripts=args.save_transcripts,
         )
-
-    elif args.command == "fingerprint":
-        from graph_rag.fingerprint_pipeline import run_fingerprint
-        run_fingerprint(
-            project_name=args.project_name,
-            output_path=args.output,
-            pretty=args.pretty,
-            qdrant_db_path=args.qdrant_path,
-            model=args.model,
-        )
+    else:
+        exit(f"Unknown command: {args.command}")
 
 
 if __name__ == "__main__":

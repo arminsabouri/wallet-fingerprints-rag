@@ -36,7 +36,9 @@ def _adapt_prompt(prompt: str) -> str:
     prompt = prompt.replace(
         "Analyze the following code to", "Find and analyze the relevant code to"
     )
-    prompt = prompt.replace("the following code", "the relevant code in the wallet repository")
+    prompt = prompt.replace(
+        "the following code", "the relevant code in the wallet repository"
+    )
     return prompt
 
 
@@ -108,7 +110,9 @@ async def _analyze_heuristic(
                     result_text = message.result
                     if message.is_error:
                         agent_error = True
-                        logger.warning(f"[{key}] agent finished with error: {result_text!r}")
+                        logger.warning(
+                            f"[{key}] agent finished with error: {result_text!r}"
+                        )
         except Exception as e:
             logger.warning(f"[{key}] agent exception: {e}")
             return -2, transcript
@@ -196,6 +200,7 @@ def run_agent_fingerprint(
 
     if save_transcripts:
         from pathlib import Path
+
         transcript_path = Path(output_path).with_suffix(".transcripts.json")
         with open(transcript_path, "w") as f:
             json.dump(transcripts, f, indent=2)
