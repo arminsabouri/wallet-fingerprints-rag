@@ -94,7 +94,7 @@ async def _analyze_heuristic(
         mcp_servers=mcp_servers,
         system_prompt=SYSTEM_PROMPT,
         model=model,
-        max_turns=20,
+        max_turns=40,
         permission_mode="bypassPermissions",
     )
 
@@ -179,7 +179,7 @@ def run_agent_fingerprint(
     }
 
     async def _run_all() -> tuple[dict, dict]:
-        heuristics = HEURISTICS[:3]
+        heuristics = HEURISTICS
         sem = asyncio.Semaphore(concurrency)
         tasks = [
             _analyze_heuristic(h, mcp_servers, model, sem, save_transcripts)
