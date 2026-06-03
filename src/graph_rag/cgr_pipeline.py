@@ -4,10 +4,14 @@ import shutil
 from pathlib import Path
 from typing import Iterable
 
+from loguru import logger
+
 from codebase_rag.config import load_cgrignore_patterns, settings
 from codebase_rag.graph_updater import GraphUpdater
 from codebase_rag.parser_loader import load_parsers
 from codebase_rag.services.graph_service import MemgraphIngestor
+
+from graph_rag.dart_support import register_dart
 
 
 def _resolve_excludes(
@@ -37,6 +41,8 @@ def run_graph_build(
     """
     repo_path = repo_path.resolve()
     effective_batch = settings.resolve_batch_size(batch_size)
+
+    register_dart()
 
     exclude_paths, unignore_paths = _resolve_excludes(repo_path, exclude)
 

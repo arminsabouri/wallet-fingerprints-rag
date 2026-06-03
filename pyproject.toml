@@ -10,6 +10,7 @@ dependencies = [
     "anthropic>=0.40.0",
     "voyageai>=0.3.0",
     "claude-agent-sdk",
+    "tree-sitter-language-pack>=1.8.0",
 ]
 
 [tool.hatch.build.targets.wheel]
